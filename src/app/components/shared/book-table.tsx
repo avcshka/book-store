@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { IBook } from "@/app/helpers/types/type";
 import { ActionIcon, Anchor, Table } from '@mantine/core';
 import BookModal from "@/app/components/shared/book-modal";
+import Image from "next/image"
 
 interface BooksTableProps {
   books: IBook[];
@@ -37,7 +38,7 @@ const BookTable = ({books, onDelete}: BooksTableProps) => {
           }}
           variant="filled"
         >
-          <img src="/svg/image.svg" width={14} height={14}/>
+          <Image src="/svg/image.svg" width={14} height={14} alt={"description"}/>
         </ActionIcon>
       </Table.Td>
       <Table.Td>
@@ -46,13 +47,13 @@ const BookTable = ({books, onDelete}: BooksTableProps) => {
             variant="default"
             onClick={() => router.push(`/books/${book.id}`)}
           >
-            <img src="/svg/edit.svg" width={ 14 } height={ 14 }/>
+            <Image src="/svg/edit.svg" width={ 14 } height={ 14 } alt="edit"/>
           </ActionIcon>
           <ActionIcon
             variant="default"
             onClick={() => onDelete(book.id)}
           >
-            <img src="/svg/delete.svg" width={ 14 } height={ 14 }/>
+            <Image src="/svg/delete.svg" width={ 14 } height={ 14 } alt="delete"/>
           </ActionIcon>
         </div>
       </Table.Td>

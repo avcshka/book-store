@@ -11,6 +11,7 @@ import TextInfo from "@/app/components/ui/text-info";
 import TextArea from "@/app/components/ui/text-area";
 import Button from "@/app/components/ui/button";
 import { showNotification } from '@mantine/notifications';
+import Image from "next/image"
 
 const BooksListPage = () => {
   const queryClient = useQueryClient();
@@ -64,15 +65,14 @@ const BooksListPage = () => {
     },
   });
 
-
   return (
     <div className="ml-12 mr-12">
       <div className="flex justify-between mb-8">
-        <img className="cursor-pointer" src="/svg/logo-book-store.svg" width="160" height="160"/>
+        <Image className="cursor-pointer" src="/svg/logo-book-store.svg" width="160" height="160" alt="logo book store"/>
         <div className="flex w-[100px] gap-4">
-          <img className="cursor-pointer" src="/svg/favorite.svg" width="24" height="24"/>
-          <img className="cursor-pointer" src="/svg/user.svg" width="24" height="24"/>
-          <img className="cursor-pointer" src="/svg/logout.svg" width="24" height="24"/>
+          <Image className="cursor-pointer" src="/svg/favorite.svg" width="24" height="24" alt="favorite"/>
+          <Image className="cursor-pointer" src="/svg/user.svg" width="24" height="24" alt="user"/>
+          <Image className="cursor-pointer" src="/svg/logout.svg" width="24" height="24" alt="logout"/>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ const BooksListPage = () => {
           placeholder="Description"
           onChange={ e => setForm({ ...form, description: e.target.value }) }
         />
-        <Button leftSection={ <img src="/svg/plus.svg" alt="add"/> } className="bg-blue-500 text-white px-2 py-1"
+        <Button leftSection={ <Image src="/svg/plus.svg" alt="add" width={14} height={14}/> } className="bg-blue-500 text-white px-2 py-1"
                 onClick={ () => addBook.mutate() }>
           Add
         </Button>
@@ -124,7 +124,7 @@ const BooksListPage = () => {
 
       { isLoading || isDeleting ? (
         <div className="flex justify-center items-center h-[60vh]">
-          <img src="/svg/loading.svg" alt="Loading..." width="60px" height="60px"/>
+          <Image src="/svg/loading.svg" alt="Loading..." width="60" height="60"/>
         </div>
       ) : (
         <BookTable books={ books } onDelete={ (id: number) => deleteBook(id) }/>
