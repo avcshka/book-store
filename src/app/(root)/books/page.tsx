@@ -67,7 +67,7 @@ const BooksListPage = () => {
 
   return (
     <div className="ml-12 mr-12">
-      <div className="flex justify-between mb-8">
+      <div className="flex justify-between mb-4">
         <Image className="cursor-pointer" src="/svg/logo-book-store.svg" width="160" height="160" alt="logo book store"/>
         <div className="flex w-[100px] gap-4">
           <Image className="cursor-pointer" src="/svg/favorite.svg" width="24" height="24" alt="favorite"/>
