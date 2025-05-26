@@ -86,36 +86,41 @@ const BooksListPage = () => {
       <h2 className="text-2xl font-bold">Books</h2>
       <div className="flex items-center gap-2 my-3 flex-wrap">
         <Input
-          className="w-[300px] p-1"
+          label="Title"
+          className="w-[300px]"
           value={ form.title }
           placeholder="Title"
           onChange={ e => setForm({ ...form, title: e.target.value }) }
         />
         <Input
-          className="w-[300px] p-1"
+          label="Author"
+          className="w-[300px]"
           value={ form.author }
           placeholder="Author"
           onChange={ e => setForm({ ...form, author: e.target.value }) }
         />
         <Input
-          className="w-[300px] p-1"
+          label="Year"
+          className="w-[300px]"
           placeholder="Year"
           onChange={ e => setForm({ ...form, year: Number(e.target.value) }) }
         />
         <Input
-          className="w-[300px] p-1"
+          label="Country"
+          className="w-[300px]"
           value={ form.country }
           placeholder="Country"
           onChange={ e => setForm({ ...form, country: e.target.value }) }
         />
         <TextArea
+          label="Description"
           autosize
-          className="w-[300px] h-12 p-1"
+          className="w-[300px]"
           value={ form.description! }
           placeholder="Description"
           onChange={ e => setForm({ ...form, description: e.target.value }) }
         />
-        <Button leftSection={ <Image src="/svg/plus.svg" alt="add" width={14} height={14}/> } className="bg-blue-500 text-white px-2 py-1"
+        <Button leftSection={ <Image src="/svg/plus.svg" alt="add" width={14} height={14}/> } className="bg-blue-500 text-white mt-6"
                 onClick={ () => addBook.mutate() }>
           Add
         </Button>

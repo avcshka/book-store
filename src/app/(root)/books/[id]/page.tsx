@@ -63,48 +63,56 @@ const EditBookPage = ({ params }: IdParams) => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
+            label="Title"
             className="p-2"
             value={editForm.title}
             placeholder="Title"
             onChange={e => setEditForm({ ...editForm, title: e.target.value })}
           />
           <Input
+            label="Author"
             className="p-2"
             value={editForm.author}
             placeholder="Author"
             onChange={e => setEditForm({ ...editForm, author: e.target.value })}
           />
           <Input
+            label="Year"
             className="p-2"
             value={editForm.year || ''}
             placeholder="Year"
             onChange={e => setEditForm({ ...editForm, year: Number(e.target.value) })}
           />
           <Input
+            label="Country"
             className="p-2"
             value={editForm.country}
             placeholder="Country"
             onChange={e => setEditForm({ ...editForm, country: e.target.value })}
           />
           <Input
+            label="Language"
             className="p-2"
             value={editForm.language || ""}
             placeholder="Language"
             onChange={e => setEditForm({ ...editForm, language: e.target.value })}
           />
           <Input
+            label="Pages"
             className="p-2"
             value={editForm.pages || ''}
             placeholder="Pages"
             onChange={e => setEditForm({ ...editForm, pages: Number(e.target.value) })}
           />
           <Input
+            label="Article Link"
             className="p-2"
             value={editForm.link || ""}
             placeholder="Article Link"
             onChange={e => setEditForm({ ...editForm, link: e.target.value })}
           />
           <Input
+            label="Image URL"
             className="p-2"
             value={editForm.imageLink || ""}
             placeholder="Image URL"
@@ -113,6 +121,7 @@ const EditBookPage = ({ params }: IdParams) => {
 
           <div className="md:col-span-2">
             <TextArea
+              label="Description"
               className="w-full min-h-[100px] p-2"
               value={editForm.description || ''}
               placeholder="Description"
