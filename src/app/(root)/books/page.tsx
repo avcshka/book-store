@@ -1,8 +1,8 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { IBookForm } from "@/app/helpers/types/type";
+import axios, { AxiosResponse } from "axios";
+import { IBook, IBookForm } from "@/app/helpers/types/type";
 import React, { useState } from "react";
 import { useDebounce } from "@/app/helpers/hooks/useDebounce";
 import Input from "@/app/components/ui/input";
@@ -12,39 +12,50 @@ import TextArea from "@/app/components/ui/text-area";
 import Button from "@/app/components/ui/button";
 import { showNotification } from '@mantine/notifications';
 import Image from "next/image"
+import { NumberInput } from "@mantine/core";
+import { useForm } from '@mantine/form';
 
 const BooksListPage = () => {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm: string = useDebounce(searchTerm);
 
-  const initialForm: IBookForm = {
-    title: "",
-    author: "",
-    description: "",
-    country: "",
-    imageLink: "",
-    language: "",
-    link: "",
-    pages: 0,
-    year: 0,
-  };
-
   const { data: books = [], isLoading } = useQuery({
     queryKey: ["books", debouncedSearchTerm],
     queryFn: () =>
       axios
         .get("/api/books", { params: { search: debouncedSearchTerm } })
-        .then((res) => res.data),
+        .then((res: AxiosResponse<IBook[]>) => res.data),
   });
 
-  const [form, setForm] = useState<IBookForm>(initialForm);
+  const form = useForm<IBookForm>({
+    initialValues: {
+      title: '',
+      author: '',
+      description: '',
+      country: '',
+      imageLink: '',
+      language: '',
+      link: '',
+      pages: 0,
+      year: 0,
+    },
+
+    validate: {
+      title: (value: string | undefined) => value!.length > 0 ? null : 'Title is required',
+      author: (value: string | undefined) => value!.length > 0 ? null : 'Author is required',
+      country: (value: string | undefined) => value!.length > 0 ? null : 'Country is required',
+      description: (value: string | undefined) => value!.length > 0 ? null : 'Description is required',
+      year: (value: number | null | undefined) => (typeof value === 'number' && value > 0) ? null : 'Year must be a positive number',
+    },
+  });
 
   const addBook = useMutation({
-    mutationFn: () => axios.post('/api/books', form),
+    mutationFn: () => axios.post('/api/books', form.values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['books'] });
-      setForm({ ...initialForm, year: null });
+      form.reset();
+
       showNotification({
         title: 'Success',
         message: 'Book added successfully',
@@ -53,7 +64,7 @@ const BooksListPage = () => {
     },
   });
 
-  const {  mutate: deleteBook, isPending: isDeleting} = useMutation({
+  const { mutate: deleteBook, isPending: isDeleting } = useMutation({
     mutationFn: (id: number) => axios.delete(`/api/books/${ id }`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['books'] });
@@ -68,7 +79,8 @@ const BooksListPage = () => {
   return (
     <div className="ml-12 mr-12">
       <div className="flex justify-between mb-4">
-        <Image className="cursor-pointer" src="/svg/logo-book-store.svg" width="160" height="160" alt="logo book store"/>
+        <Image className="cursor-pointer" src="/svg/logo-book-store.svg" width="160" height="160"
+               alt="logo book store"/>
         <div className="flex w-[100px] gap-4">
           <Image className="cursor-pointer" src="/svg/favorite.svg" width="24" height="24" alt="favorite"/>
           <Image className="cursor-pointer" src="/svg/user.svg" width="24" height="24" alt="user"/>
@@ -88,40 +100,48 @@ const BooksListPage = () => {
         <Input
           label="Title"
           className="w-[300px]"
-          value={ form.title }
           placeholder="Title"
-          onChange={ e => setForm({ ...form, title: e.target.value }) }
+          {...form.getInputProps('title')}
         />
         <Input
           label="Author"
           className="w-[300px]"
-          value={ form.author }
           placeholder="Author"
-          onChange={ e => setForm({ ...form, author: e.target.value }) }
+          {...form.getInputProps('author')}
         />
-        <Input
+        <NumberInput
           label="Year"
           className="w-[300px]"
           placeholder="Year"
-          onChange={ e => setForm({ ...form, year: Number(e.target.value) }) }
+          {...form.getInputProps('year')}
         />
         <Input
           label="Country"
           className="w-[300px]"
-          value={ form.country }
           placeholder="Country"
-          onChange={ e => setForm({ ...form, country: e.target.value }) }
+          {...form.getInputProps('country')}
         />
         <TextArea
           label="Description"
           autosize
           className="w-[300px]"
-          value={ form.description! }
           placeholder="Description"
-          onChange={ e => setForm({ ...form, description: e.target.value }) }
+          {...form.getInputProps('description')}
         />
-        <Button leftSection={ <Image src="/svg/plus.svg" alt="add" width={14} height={14}/> } className="bg-blue-500 text-white mt-6"
-                onClick={ () => addBook.mutate() }>
+        <Button
+          leftSection={ <Image src="/svg/plus.svg" alt="add" width={ 14 } height={ 14 }/> }
+          className="bg-blue-500 text-white mt-6"
+          onClick={ () => {
+            if(!form.validate().hasErrors) {
+              addBook.mutate();
+            } else {
+              showNotification({
+                title: 'Validate error',
+                message: 'Please fill all required fields correctly',
+                color: 'red',
+              })
+            }
+          } }>
           Add
         </Button>
       </div>
