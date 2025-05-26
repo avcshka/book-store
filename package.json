@@ -9,7 +9,7 @@
     "lint": "next lint",
     "studio": "drizzle-kit studio",
     "drizzle": "tsx watch drizzle/main.ts",
-    "drizzle:migrate": "drizzle-kit push:mysql"
+    "drizzle:migrate": "drizzle-kit push"
   },
   "dependencies": {
     "@mantine/core": "^8.0.1",
