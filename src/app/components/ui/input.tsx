@@ -5,7 +5,7 @@ import { cn } from "@/app/helpers/utils";
 const Input = ({className, ...props}: TextInputProps) => {
   return (
     <TextInput
-      className={cn("rounded-md", className)}
+      className={cn("", className)}
       { ...props }
     />
   );

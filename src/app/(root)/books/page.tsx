@@ -5,15 +5,12 @@ import axios, { AxiosResponse } from "axios";
 import { IBook, IBookForm } from "@/app/helpers/types/type";
 import React, { useState } from "react";
 import { useDebounce } from "@/app/helpers/hooks/useDebounce";
-import Input from "@/app/components/ui/input";
 import BookTable from "@/app/components/shared/book-table";
-import TextInfo from "@/app/components/ui/text-info";
-import TextArea from "@/app/components/ui/text-area";
-import Button from "@/app/components/ui/button";
 import { showNotification } from '@mantine/notifications';
 import Image from "next/image"
-import { NumberInput } from "@mantine/core";
+import { CloseButton, NumberInput } from "@mantine/core";
 import { useForm } from '@mantine/form';
+import { Button, Input, TextArea, TextInfo } from "@/app/components/ui";
 
 const BooksListPage = () => {
   const queryClient = useQueryClient();
@@ -22,10 +19,13 @@ const BooksListPage = () => {
 
   const { data: books = [], isLoading } = useQuery({
     queryKey: ["books", debouncedSearchTerm],
-    queryFn: () =>
-      axios
+    queryFn: async () => {
+      await new Promise(res => setTimeout(res, 700));
+
+      return await axios
         .get("/api/books", { params: { search: debouncedSearchTerm } })
-        .then((res: AxiosResponse<IBook[]>) => res.data),
+        .then((res: AxiosResponse<IBook[]>) => res.data);
+    }
   });
 
   const form = useForm<IBookForm>({
@@ -79,21 +79,31 @@ const BooksListPage = () => {
   return (
     <div className="ml-12 mr-12">
       <div className="flex justify-between mb-4">
-        <Image className="cursor-pointer" src="/svg/logo-book-store.svg" width="160" height="160"
-               alt="logo book store"/>
-        <div className="flex w-[100px] gap-4">
+        <Image className="cursor-pointer" src="/svg/logo-book-store.svg" width="160" height="160" alt="logo book store"/>
+
+        <Input
+          placeholder="Search by title..."
+          value={ searchTerm }
+          onChange={ e => setSearchTerm(e.target.value) }
+          className="mt-4 w-full"
+          rightSectionPointerEvents="all"
+          mt="md"
+          rightSection={
+          <CloseButton
+            aria-label="Clear input"
+            onClick={() => setSearchTerm('')}
+            style={{display: searchTerm ? undefined : 'none'}}
+          />
+          }
+        />
+
+        <div className="flex w-[100px] gap-4 ml-8">
           <Image className="cursor-pointer" src="/svg/favorite.svg" width="24" height="24" alt="favorite"/>
           <Image className="cursor-pointer" src="/svg/user.svg" width="24" height="24" alt="user"/>
           <Image className="cursor-pointer" src="/svg/logout.svg" width="24" height="24" alt="logout"/>
         </div>
       </div>
 
-      <Input
-        placeholder="Search by title..."
-        value={ searchTerm }
-        onChange={ e => setSearchTerm(e.target.value) }
-        className="border p-1 mb-4 w-full"
-      />
 
       <h2 className="text-2xl font-bold">Books</h2>
       <div className="flex items-center gap-2 my-3 flex-wrap">
@@ -101,38 +111,38 @@ const BooksListPage = () => {
           label="Title"
           className="w-[300px]"
           placeholder="Title"
-          {...form.getInputProps('title')}
+          { ...form.getInputProps('title') }
         />
         <Input
           label="Author"
           className="w-[300px]"
           placeholder="Author"
-          {...form.getInputProps('author')}
+          { ...form.getInputProps('author') }
         />
         <NumberInput
           label="Year"
           className="w-[300px]"
           placeholder="Year"
-          {...form.getInputProps('year')}
+          { ...form.getInputProps('year') }
         />
         <Input
           label="Country"
           className="w-[300px]"
           placeholder="Country"
-          {...form.getInputProps('country')}
+          { ...form.getInputProps('country') }
         />
         <TextArea
           label="Description"
           autosize
           className="w-[300px]"
           placeholder="Description"
-          {...form.getInputProps('description')}
+          { ...form.getInputProps('description') }
         />
         <Button
           leftSection={ <Image src="/svg/plus.svg" alt="add" width={ 14 } height={ 14 }/> }
           className="bg-blue-500 text-white mt-6"
           onClick={ () => {
-            if(!form.validate().hasErrors) {
+            if (!form.validate().hasErrors) {
               addBook.mutate();
             } else {
               showNotification({
@@ -149,13 +159,15 @@ const BooksListPage = () => {
 
       { isLoading || isDeleting ? (
         <div className="flex justify-center items-center h-[60vh]">
-          <Image src="/svg/loading.svg" alt="Loading..." width="60" height="60"/>
+          <div className="animate-spin">
+            <Image src="/svg/loading.svg" alt="Loading..." width="60" height="60"/>
+          </div>
         </div>
       ) : (
         <BookTable books={ books } onDelete={ (id: number) => deleteBook(id) }/>
       ) }
 
-      <div className="mb-6">
+      <div className="mb-2">
         <TextInfo>
           Books: { books.length }
         </TextInfo>
